@@ -29,3 +29,18 @@ export interface Cliente {
     endereco: string;
   }
   
+  export type Schema<T> = {
+    [K in keyof T]: (value: string) => T[K];
+  };
+  
+  export class ApiError extends Error {
+    constructor(
+      public message: string,
+      public status?: number,
+      public data?: any
+    ) {
+      super(message);
+      Object.setPrototypeOf(this, ApiError.prototype);
+    }
+  }
+  
