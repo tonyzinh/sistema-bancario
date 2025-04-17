@@ -1,10 +1,9 @@
-// src/pages/HomePage.tsx
 import { useEffect, useState } from 'react';
-import { Cliente, Conta, Agencia } from '@/types';
+import { Cliente } from '@/types';
 import { ClientesList } from '@/components/Cliente';
-import { fetchClientes, fetchContas, fetchAgencias } from '@/services/api';
+import { fetchClientes } from '@/services/api';
 
-export function Home() {
+export function Home() { 
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
