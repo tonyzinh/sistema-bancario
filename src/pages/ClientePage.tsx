@@ -1,4 +1,3 @@
-// src/pages/ClientePage.tsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Cliente, Conta, Agencia } from '@/types';
@@ -90,7 +89,7 @@ export function ClientePage() {
         cliente={cliente} 
         contas={contas} 
         agencias={agencias} 
-      />
+      /> 
     </div>
   );
 }
