@@ -83,7 +83,10 @@ export function ClientesList({ clientes }: ListaClientes) {
         <Input
           placeholder="Buscar por nome ou CPF/CNPJ"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
           className={isMobile ? "w-full" : "max-w-sm"}
         />
       </CardHeader>
@@ -152,104 +155,104 @@ export function ClientesList({ clientes }: ListaClientes) {
         )}
         {total > 1 && (
           <div className="mt-6">
-          <Pagination>
-            <PaginationContent className="flex justify-center gap-1">
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => identificador(Math.max(1, currentPage - 1))}
-                  className={
-                    currentPage === 1
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
-                />
-              </PaginationItem>
-              {isMobile ? (
-                <>
-                  {currentPage > 2 && (
-                    <>
+            <Pagination>
+              <PaginationContent className="flex justify-center gap-1">
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => identificador(Math.max(1, currentPage - 1))}
+                    className={
+                      currentPage === 1
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+                {isMobile ? (
+                  <>
+                    {currentPage > 2 && (
+                      <>
+                        <PaginationItem>
+                          <PaginationLink
+                            onClick={() => identificador(1)}
+                            isActive={currentPage === 1}
+                          >
+                            1
+                          </PaginationLink>
+                        </PaginationItem>
+                        {currentPage > 3 && (
+                          <PaginationItem>
+                            <span className="px-1 text-muted-foreground">
+                              ...
+                            </span>
+                          </PaginationItem>
+                        )}
+                      </>
+                    )}
+                    {currentPage > 1 && (
                       <PaginationItem>
                         <PaginationLink
-                          onClick={() => identificador(1)}
-                          isActive={currentPage === 1}
+                          onClick={() => identificador(currentPage - 1)}
                         >
-                          1
+                          {currentPage - 1}
                         </PaginationLink>
                       </PaginationItem>
-                      {currentPage > 3 && (
-                        <PaginationItem>
-                          <span className="px-1 text-muted-foreground">
-                            ...
-                          </span>
-                        </PaginationItem>
-                      )}
-                    </>
-                  )}
-                  {currentPage > 1 && (
+                    )}
                     <PaginationItem>
-                      <PaginationLink
-                        onClick={() => identificador(currentPage - 1)}
-                      >
-                        {currentPage - 1}
-                      </PaginationLink>
+                      <PaginationLink isActive>{currentPage}</PaginationLink>
                     </PaginationItem>
-                  )}
-                  <PaginationItem>
-                    <PaginationLink isActive>{currentPage}</PaginationLink>
-                  </PaginationItem>
-                  {currentPage < total && (
-                    <PaginationItem>
-                      <PaginationLink
-                        onClick={() => identificador(currentPage + 1)}
-                      >
-                        {currentPage + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )}
-                  {currentPage < total - 1 && (
-                    <>
-                      {currentPage < total - 2 && (
-                        <PaginationItem>
-                          <span className="px-1 text-muted-foreground">
-                            ...
-                          </span>
-                        </PaginationItem>
-                      )}
+                    {currentPage < total && (
                       <PaginationItem>
-                        <PaginationLink onClick={() => identificador(total)}>
-                          {total}
+                        <PaginationLink
+                          onClick={() => identificador(currentPage + 1)}
+                        >
+                          {currentPage + 1}
                         </PaginationLink>
                       </PaginationItem>
-                    </>
-                  )}
-                </>
-              ) : (
-                // Versão desktop/tablet: mostra todas as páginas
-                Array.from({ length: total }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => identificador(page)}
-                      isActive={currentPage === page}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))
-              )}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    identificador(Math.min(total, currentPage + 1))
-                  }
-                  className={
-                    currentPage === total
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                    )}
+                    {currentPage < total - 1 && (
+                      <>
+                        {currentPage < total - 2 && (
+                          <PaginationItem>
+                            <span className="px-1 text-muted-foreground">
+                              ...
+                            </span>
+                          </PaginationItem>
+                        )}
+                        <PaginationItem>
+                          <PaginationLink onClick={() => identificador(total)}>
+                            {total}
+                          </PaginationLink>
+                        </PaginationItem>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  // Versão desktop/tablet: mostra todas as páginas
+                  Array.from({ length: total }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => identificador(page)}
+                        isActive={currentPage === page}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      identificador(Math.min(total, currentPage + 1))
+                    }
+                    className={
+                      currentPage === total
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         )}
       </CardContent>
