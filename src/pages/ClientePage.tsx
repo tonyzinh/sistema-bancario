@@ -4,11 +4,13 @@ import { Cliente, Conta, Agencia } from '@/types';
 import { Detalhes } from '@/components/InfoCliente';
 import { fetchClientes, fetchContas, fetchAgencias } from '@/services/api';
 import { Button } from '@/components/ui/button';
+import { useMediaQuery } from "@/hooks/MediaQuery";
 
 export function ClientePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+  const mobile = useMediaQuery("(max-width: 640px)");
+
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [contas, setContas] = useState<Conta[]>([]);
   const [agencias, setAgencias] = useState<Agencia[]>([]);
@@ -73,23 +75,16 @@ export function ClientePage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center mb-6">
-        <Button 
-          variant="outline" 
-          onClick={() => navigate('/')}
-          className="mr-4"
-        >
-          ← Voltar
-        </Button>
-        <h1 className="text-3xl font-bold">Detalhes do Cliente</h1>
-      </div>
-      
-      <Detalhes 
-        cliente={cliente} 
-        contas={contas} 
-        agencias={agencias} 
-      /> 
+    <div className={`container mx-auto px-2 ${mobile ? 'space-y-4' : 'space-y-8'} py-4`}>
+      <Button onClick={() => navigate('/')} className="mr-4">
+        ← Voltar
+      </Button>
+      <h1 className={`font-bold ${mobile ? 'text-xl' : 'text-2xl'}`}>
+        Detalhes do Cliente
+      </h1>
+      {!loading && !error && cliente && (
+        <Detalhes cliente={cliente} contas={contas} agencias={agencias} mobile={mobile} />
+      )}
     </div>
   );
 }

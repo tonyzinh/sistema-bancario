@@ -52,8 +52,7 @@ export function Home() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Sistema Bancário</h1>
+    <div className="container mx-auto px-2 sm:px-4 py-4">
       <ClientesList clientes={clientes} />
     </div>
   );

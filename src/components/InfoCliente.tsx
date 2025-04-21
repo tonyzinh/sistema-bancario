@@ -3,20 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getContasCliente, getAgenciaPorCodigo, formatCurrency, formatDate } from '../services/api';
+import { formatCnpjCpf } from "@/utils/formatacao";
 
 interface Dados {
   cliente: Cliente;
   contas: Conta[];
   agencias: Agencia[];
+  mobile: boolean;
 }
 
-export function Detalhes({ cliente, contas, agencias }: Dados) {
-  // Buscar conta e agencia do cliente
+export function Detalhes({ cliente, contas, agencias, mobile }: Dados) {
   const contasCliente = getContasCliente(contas, cliente.cpfCnpj);
   const agenciaCliente = getAgenciaPorCodigo(agencias, cliente.codigoAgencia);
 
   return (
-    <div className="space-y-6">
+    <div className={`grid gap-6 ${mobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
       <Card>
         <CardHeader>
           <CardTitle>Detalhes do Cliente</CardTitle>
@@ -31,7 +32,7 @@ export function Detalhes({ cliente, contas, agencias }: Dados) {
                 {cliente.nomeSocial && (
                   <p><span className="font-medium">Nome Social:</span> {cliente.nomeSocial}</p>
                 )}
-                <p><span className="font-medium">CPF/CNPJ:</span> {cliente.cpfCnpj}</p>
+                <span className='font-medium'>CPF/CNPJ: {formatCnpjCpf(cliente.cpfCnpj)}</span>
                 {cliente.rg && (
                   <p><span className="font-medium">RG:</span> {cliente.rg}</p>
                 )}
@@ -80,6 +81,7 @@ export function Detalhes({ cliente, contas, agencias }: Dados) {
                       <TableHead>Saldo</TableHead>
                       <TableHead>Limite de Crédito</TableHead>
                       <TableHead>Crédito Disponível</TableHead>
+                      <TableHead>CPF/CNPJ</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -90,6 +92,7 @@ export function Detalhes({ cliente, contas, agencias }: Dados) {
                         <TableCell>{formatCurrency(conta.saldo)}</TableCell>
                         <TableCell>{formatCurrency(conta.limiteCredito)}</TableCell>
                         <TableCell>{formatCurrency(conta.creditoDisponivel)}</TableCell>
+                        <TableCell>{formatCnpjCpf(cliente.cpfCnpj)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
