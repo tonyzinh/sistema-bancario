@@ -148,8 +148,9 @@ export function ClientesList({ clientes }: ListaClientes) {
           </Table>
         )}
         {total > 1 && (
+          <div className="mt-6">
           <Pagination>
-            <PaginationContent>
+            <PaginationContent className="flex justify-center gap-1">
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => identificador(Math.max(1, currentPage - 1))}
@@ -160,16 +161,78 @@ export function ClientesList({ clientes }: ListaClientes) {
                   }
                 />
               </PaginationItem>
-              {Array.from({ length: total }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    onClick={() => identificador(page)}
-                    isActive={currentPage === page}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
+              {isMobile ? (
+                <>
+                  {currentPage > 2 && (
+                    <>
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => identificador(1)}
+                          isActive={currentPage === 1}
+                        >
+                          1
+                        </PaginationLink>
+                      </PaginationItem>
+                      {currentPage > 3 && (
+                        <PaginationItem>
+                          <span className="px-1 text-muted-foreground">
+                            ...
+                          </span>
+                        </PaginationItem>
+                      )}
+                    </>
+                  )}
+                  {currentPage > 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() => identificador(currentPage - 1)}
+                      >
+                        {currentPage - 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationLink isActive>{currentPage}</PaginationLink>
+                  </PaginationItem>
+                  {currentPage < total && (
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() => identificador(currentPage + 1)}
+                      >
+                        {currentPage + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+                  {currentPage < total - 1 && (
+                    <>
+                      {currentPage < total - 2 && (
+                        <PaginationItem>
+                          <span className="px-1 text-muted-foreground">
+                            ...
+                          </span>
+                        </PaginationItem>
+                      )}
+                      <PaginationItem>
+                        <PaginationLink onClick={() => identificador(total)}>
+                          {total}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </>
+                  )}
+                </>
+              ) : (
+                // Versão desktop/tablet: mostra todas as páginas
+                Array.from({ length: total }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => identificador(page)}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))
+              )}
               <PaginationItem>
                 <PaginationNext
                   onClick={() =>
@@ -184,6 +247,7 @@ export function ClientesList({ clientes }: ListaClientes) {
               </PaginationItem>
             </PaginationContent>
           </Pagination>
+          </div>
         )}
       </CardContent>
     </Card>
