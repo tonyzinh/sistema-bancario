@@ -1,12 +1,27 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Cliente } from '@/types';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatCurrency, formatDate } from '@/services/api';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious} from "@/components/ui/pagination";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Cliente } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency, formatDate } from "@/services/api";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useMediaQuery } from "@/hooks/MediaQuery";
 import { formatCnpjCpf } from "@/utils/formatacao";
 
@@ -17,21 +32,42 @@ interface ListaClientes {
 export function ClientesList({ clientes }: ListaClientes) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
 
-  const itemsPerPage = isMobile ? 5 : (isTablet ? 8 : 10);
+  const itemsPerPage = isMobile ? 5 : isTablet ? 8 : 10;
 
-  const filteredClientes = clientes.filter(cliente =>
-    cliente.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    cliente.cpfCnpj.includes(searchTerm)
-  );
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const total = Math.ceil(filteredClientes.length / itemsPerPage);
+  function filtrarPorNome(cliente: Cliente, termo: string) {
+    const nome = cliente.nome.trim().toLowerCase();
+    return nome.includes(termo.trim().toLowerCase());
+  }
+
+  function formatCpfCnpj(value: string) {
+    return value.replace(/\D/g, "");
+  }
+
+  function filtrarPorCpfCnpj(cliente: Cliente, termo: string) {
+    const cpfCnpjCliente = formatCpfCnpj(cliente.cpfCnpj);
+    const cpfCnpjBusca = formatCpfCnpj(termo);
+    return cpfCnpjCliente.startsWith(cpfCnpjBusca);
+  }
+
+  const filtro = clientes.filter((cliente) => {
+    const buscar = searchTerm.trim();
+    if (!buscar) return true;
+    const isNumero = /^\d+$/.test(formatCpfCnpj(buscar));
+    if (isNumero) {
+      return filtrarPorCpfCnpj(cliente, buscar);
+    }
+    return filtrarPorNome(cliente, buscar);
+  });
+
+  const total = Math.ceil(filtro.length / itemsPerPage);
   const inicio = (currentPage - 1) * itemsPerPage;
   const final = inicio + itemsPerPage;
-  const currentClientes = filteredClientes.slice(inicio, final);
+  const currentClientes = filtro.slice(inicio, final);
 
   const identificador = (page: number) => setCurrentPage(page);
   const ver_detalhes = (clienteId: string) => navigate(`/cliente/${clienteId}`);
@@ -58,7 +94,10 @@ export function ClientesList({ clientes }: ListaClientes) {
                   <p>CPF/CNPJ: {cliente.cpfCnpj}</p>
                   <p>Email: {cliente.email}</p>
                   <p>Patrimônio: {formatCurrency(cliente.patrimonio)}</p>
-                  <Button className="w-full mt-2" onClick={() => ver_detalhes(cliente.id)}>
+                  <Button
+                    className="w-full mt-2"
+                    onClick={() => ver_detalhes(cliente.id)}
+                  >
                     Ver Detalhes
                   </Button>
                 </Card>
@@ -87,7 +126,11 @@ export function ClientesList({ clientes }: ListaClientes) {
                     <TableCell>{cliente.nome}</TableCell>
                     <TableCell>{formatCnpjCpf(cliente.cpfCnpj)}</TableCell>
                     {!isTablet && <TableCell>{cliente.email}</TableCell>}
-                    {!isTablet && <TableCell>{formatDate(cliente.dataNascimento)}</TableCell>}
+                    {!isTablet && (
+                      <TableCell>
+                        {formatDate(cliente.dataNascimento)}
+                      </TableCell>
+                    )}
                     <TableCell>{formatCurrency(cliente.patrimonio)}</TableCell>
                     <TableCell>
                       <Button onClick={() => ver_detalhes(cliente.id)}>
@@ -108,20 +151,35 @@ export function ClientesList({ clientes }: ListaClientes) {
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious onClick={() => identificador(Math.max(1, currentPage - 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                <PaginationPrevious
+                  onClick={() => identificador(Math.max(1, currentPage - 1))}
+                  className={
+                    currentPage === 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
                 />
               </PaginationItem>
               {Array.from({ length: total }, (_, i) => i + 1).map((page) => (
                 <PaginationItem key={page}>
-                  <PaginationLink onClick={() => identificador(page)} isActive={currentPage === page}>
+                  <PaginationLink
+                    onClick={() => identificador(page)}
+                    isActive={currentPage === page}
+                  >
                     {page}
                   </PaginationLink>
                 </PaginationItem>
               ))}
               <PaginationItem>
-                <PaginationNext onClick={() => identificador(Math.min(total, currentPage + 1))}
-                  className={currentPage === total ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                <PaginationNext
+                  onClick={() =>
+                    identificador(Math.min(total, currentPage + 1))
+                  }
+                  className={
+                    currentPage === total
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
                 />
               </PaginationItem>
             </PaginationContent>
