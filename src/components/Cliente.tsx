@@ -69,7 +69,10 @@ export function ClientesList({ clientes }: ListaClientes) {
   const final = inicio + itemsPerPage;
   const currentClientes = filtro.slice(inicio, final);
 
-  const identificador = (page: number) => setCurrentPage(page);
+  const identificador = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   const ver_detalhes = (clienteId: string) => navigate(`/cliente/${clienteId}`);
 
   return (
