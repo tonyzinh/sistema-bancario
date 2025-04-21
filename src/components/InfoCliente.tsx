@@ -132,7 +132,7 @@ export function Detalhes({ cliente, contas, agencias, mobile }: Dados) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
+                      <TableHead className="notranslate">ID</TableHead>
                       <TableHead>Tipo</TableHead>
                       <TableHead>Saldo</TableHead>
                       <TableHead>Limite de Crédito</TableHead>
